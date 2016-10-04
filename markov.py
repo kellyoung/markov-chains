@@ -50,12 +50,21 @@ def make_chains(text_string):
 
 def make_text(chains):
     """Takes dictionary of markov chains; returns random text."""
+    
+    bigram = choice(chains.keys())
+    random_text = bigram[0].title() + ' ' + bigram[1] + ' '
 
-    text = ""
+    while True:
+        try:
+            bigram_choices = chains[bigram] #returns a list of values of bigram
+            word_to_add = choice(bigram_choices) #choosing one of the values of bigram
+            random_text += word_to_add + ' '
+            bigram = (bigram[1], word_to_add)
 
-    # your code goes here
-
-    return text
+        except KeyError:
+            break
+    
+    return random_text
 
 
 input_path = "green-eggs.txt"
