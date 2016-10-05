@@ -35,12 +35,10 @@ def make_chains(text_string, gram_length):
     words = text_string.split()
 
     for i in range(len(words) - gram_length):
-        # first create a tuple of n length
-        n_gram_args = [words[i]]
-        for word_position in range(1, gram_length):
-            n_gram_args.append(words[i+word_position])
+        # first create a tuple as chains' key
+        n_grams = tuple(words[i:i+gram_length])
 
-        n_grams = tuple(n_gram_args)
+        #then create the key's value
         chains[n_grams] = chains.get(n_grams, [])
         chains[n_grams].append(words[i+gram_length])
 
@@ -49,30 +47,40 @@ def make_chains(text_string, gram_length):
 
 def make_text(chains, gram_length):
     """Takes dictionary of markov chains; returns random text."""
-    
-    n_gram = choice(chains.keys())
-    random_text = ''
-    for index in range(gram_length):
+
+    # create a sublist of tuples to choose 1
+    capitalized_keys = [key for key in chains.keys() if key[0][0].isupper()]
+
+    n_gram = choice(capitalized_keys)  # choosing randomly out of keys to begin chain process
+    random_text = ''                # instantiates string
+
+    for index in range(gram_length):  # adding each word in the tuple to start off
         random_text += n_gram[index] + ' '
 
-    while True:
+    making_text = True
+    while making_text:
         try:
-            n_gram_choices = chains[n_gram] #returns a list of values of bigram
-            word_to_add = choice(n_gram_choices) #choosing one of the values of bigram
+            n_gram_choices = chains[n_gram]  # returns a list of values of bigram
+            word_to_add = choice(n_gram_choices)  # choosing one of the values of bigram
             
-            random_text += word_to_add + ' '
-            
-            n_gram_args = []
-            for index in range(1, gram_length):
-                n_gram_args.append(n_gram[index])
-            n_gram_args.append(word_to_add)
-
-            n_gram = tuple(n_gram_args)
+            random_text += word_to_add + ' '  # adds a new word to the text
+            n_gram_args = list(n_gram[1:gram_length]) + [word_to_add]  # creates next key values for chain
+            n_gram = tuple(n_gram_args)  # converts the key values to tuple
 
         except KeyError:
-            break
+            making_text = False  # reaches end of markov chain
     
-    return random_text.capitalize()
+    # slice random_text to when you find the last punctuation
+
+    # find last punctuation
+    punctuations = ['.', '?', '!', '"']
+
+    index = len(random_text) - 1
+
+    while index > -1:
+        if random_text[index] in punctuations:
+            return random_text[:index + 1]
+        index -= 1
 
 
 input_path = sys.argv[1]
