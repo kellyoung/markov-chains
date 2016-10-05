@@ -1,5 +1,7 @@
 from random import choice
 
+import sys
+
 
 def open_and_read_file(file_path):
     """Takes file path as string; returns text as string.
@@ -34,14 +36,6 @@ def make_chains(text_string):
 
     for i in range(len(words) - 2):
         bigram = (words[i], words[i + 1])
-
-        # if key not in chains:
-        #     chains[key] = [words[i + 2]]
-        # else:
-        #     chains[key].append(words[i + 2])
-
-        # also works, but takes more memory
-        # chains[bigram] = chains.get(bigram, []) + [words[i+2]]
         chains[bigram] = chains.get(bigram, [])
         chains[bigram].append(words[i+2])
 
@@ -67,7 +61,7 @@ def make_text(chains):
     return random_text
 
 
-input_path = "green-eggs.txt"
+input_path = sys.argv[1]
 
 # Open the file and turn it into one long string
 input_text = open_and_read_file(input_path)
