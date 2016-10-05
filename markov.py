@@ -47,23 +47,32 @@ def make_chains(text_string, gram_length):
     return chains
 
 
-def make_text(chains):
+def make_text(chains, gram_length):
     """Takes dictionary of markov chains; returns random text."""
     
-    bigram = choice(chains.keys())
-    random_text = bigram[0].title() + ' ' + bigram[1] + ' '
+    n_gram = choice(chains.keys())
+    random_text = ''
+    for index in range(gram_length):
+        random_text += n_gram[index] + ' '
 
     while True:
         try:
-            bigram_choices = chains[bigram] #returns a list of values of bigram
-            word_to_add = choice(bigram_choices) #choosing one of the values of bigram
+            n_gram_choices = chains[n_gram] #returns a list of values of bigram
+            word_to_add = choice(n_gram_choices) #choosing one of the values of bigram
+            
             random_text += word_to_add + ' '
-            bigram = (bigram[1], word_to_add)
+            
+            n_gram_args = []
+            for index in range(1, gram_length):
+                n_gram_args.append(n_gram[index])
+            n_gram_args.append(word_to_add)
+
+            n_gram = tuple(n_gram_args)
 
         except KeyError:
             break
     
-    return random_text
+    return random_text.capitalize()
 
 
 input_path = sys.argv[1]
@@ -75,8 +84,7 @@ input_text = open_and_read_file(input_path)
 n = int(sys.argv[2])
 chains = make_chains(input_text, n)
 
-print chains
-# Produce random text
-# random_text = make_text(chains)
+#Produce random text
+random_text = make_text(chains, n)
 
-# print random_text
+print random_text
