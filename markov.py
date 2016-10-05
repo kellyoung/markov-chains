@@ -83,14 +83,15 @@ def make_text(chains, gram_length):
         index -= 1
 
 
-input_path = sys.argv[1]
+user_inputs = sys.argv
 
-# Open the file and turn it into one long string
-input_text = open_and_read_file(input_path)
+all_texts = ''
+for index in range(2, len(user_inputs)):
+    all_texts += open_and_read_file(user_inputs[index]) + ' '
 
 # Get a Markov chain
-n = int(sys.argv[2])
-chains = make_chains(input_text, n)
+n = int(user_inputs[1])
+chains = make_chains(all_texts, n)
 
 #Produce random text
 random_text = make_text(chains, n)
